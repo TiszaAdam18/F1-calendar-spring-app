@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layout :: layout(pageTitleContent=~{::titleFragment},
+                                     pageSpecificStylesContent=~{::stylesFragment},
+                                     mainPageContent=~{::contentFragment},
+                                     pageSpecificScriptsContent=~{::scriptsFragment})}">
+<head>
+    <title th:fragment="titleFragment" th:text="${pageTitle ?: 'Versenyző Adatok'}">Versenyző Adatok</title>
+
+    <th:block th:fragment="stylesFragment">
+        <style>
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #dde2e7;
+            }
+
+            .page-header h1 {
+                font-family: 'Racing Sans One', cursive;
+                color: #2c3e50;
+                font-size: 2.5em;
+                margin: 0;
+            }
+
+            .form-group {
+                margin-bottom: 25px;
+            }
+
+            .form-group label {
+                display: block;
+                font-weight: 600;
+                color: #34495e;
+                margin-bottom: 8px;
+                font-size: 0.95em;
+            }
+
+            .form-control {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 1em;
+                color: #495057;
+                background-color: #fff;
+                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+
+            .form-control:focus {
+                border-color: #363795;
+                outline: 0;
+                box-shadow: 0 0 0 0.2rem rgba(54, 55, 149, 0.25);
+            }
+
+            select.form-control {
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2334495e%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.4-5.4-13z%22%2F%3E%3C%2Fsvg%3E');
+                background-repeat: no-repeat;
+                background-position: right 15px center;
+                background-size: 10px 10px;
+                padding-right: 40px;
+            }
+
+            .error-message {
+                color: #e74c3c;
+                font-size: 0.85em;
+                margin-top: 5px;
+                display: block;
+            }
+
+            .has-error .form-control {
+                border-color: #e74c3c;
+            }
+            .has-error .form-control:focus {
+                box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+            }
+
+            .form-actions {
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #e9ecef;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+
+            .form-actions .btn {
+                min-width: 120px;
+            }
+
+            @media (max-width: 768px) {
+                .page-header h1 { font-size: 2em; }
+                .form-actions { flex-direction: column; }
+                .form-actions .btn { width: 100%; margin-bottom: 10px; }
+                .form-actions .btn:last-child { margin-bottom: 0; }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div th:fragment="contentFragment">
+    <div class="page-content-container">
+        <div class="page-header">
+            <h1 th:text="${driverDTO.id == null ? 'Új Versenyző Létrehozása' : 'Versenyző Szerkesztése: ' + driverDTO.firstName + ' ' + driverDTO.lastName}">Versenyző Adatok</h1>
+        </div>
+
+        <form th:object="${driverDTO}" th:action="${formAction}" method="post">
+            <div class="form-group" th:classappend="${#fields.hasErrors('firstName')} ? 'has-error' : ''">
+                <label for="firstName">Keresztnév:</label>
+                <input type="text" id="firstName" th:field="*{firstName}" class="form-control" placeholder="Pl. Max"/>
+                <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="error-message"></span>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('lastName')} ? 'has-error' : ''">
+                <label for="lastName">Vezetéknév:</label>
+                <input type="text" id="lastName" th:field="*{lastName}" class="form-control" placeholder="Pl. Verstappen"/>
+                <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="error-message"></span>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('nationality')} ? 'has-error' : ''">
+                <label for="nationality">Nemzetiség:</label>
+                <input type="text" id="nationality" th:field="*{nationality}" class="form-control" placeholder="Pl. Holland"/>
+                <span th:if="${#fields.hasErrors('nationality')}" th:errors="*{nationality}" class="error-message"></span>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('dateOfBirth')} ? 'has-error' : ''">
+                <label for="dateOfBirth">Születési Dátum:</label>
+                <input type="date" id="dateOfBirth" th:field="*{dateOfBirth}" class="form-control"/>
+                <span th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}" class="error-message"></span>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('permanentNumber')} ? 'has-error' : ''">
+                <label for="permanentNumber">Állandó Rajtszám:</label>
+                <input type="number" id="permanentNumber" th:field="*{permanentNumber}" class="form-control" placeholder="Pl. 33"/>
+                <span th:if="${#fields.hasErrors('permanentNumber')}" th:errors="*{permanentNumber}" class="error-message"></span>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('teamId')} ? 'has-error' : ''">
+                <label for="teamId">Csapat:</label>
+                <select id="teamId" th:field="*{teamId}" class="form-control">
+                    <option value="">Válassz csapatot (opcionális)...</option>
+                    <option th:each="team : ${teams}"
+                            th:value="${team.id}"
+                            th:text="${team.name}"
+                            th:selected="${driverDTO.teamId != null && team.id == driverDTO.teamId}">
+                        Csapat neve
+                    </option>
+                </select>
+                <span th:if="${#fields.hasErrors('teamId')}" th:errors="*{teamId}" class="error-message"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success" th:text="${driverDTO.id == null ? 'Létrehozás' : 'Mentés'}">Mentés</button>
+                <a th:href="@{/drivers}" class="btn btn-outline-secondary">Mégse</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block th:fragment="scriptsFragment">
+</th:block>
+</body>
+</html>

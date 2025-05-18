@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layout :: layout(pageTitleContent=~{::titleFragment},
+                                     pageSpecificStylesContent=~{::stylesFragment},
+                                     mainPageContent=~{::contentFragment},
+                                     pageSpecificScriptsContent=~{::scriptsFragment})}">
+<head>
+    <title th:fragment="titleFragment" th:text="${team != null ? team.name + ' - Csapat Részletei' : 'Csapat Részletei'}">Csapat Részletei</title>
+
+    <th:block th:fragment="stylesFragment">
+        <style>
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #dde2e7;
+            }
+
+            .page-header h1 {
+                font-family: 'Racing Sans One', cursive;
+                color: #2c3e50;
+                font-size: 2.5em;
+                margin: 0;
+            }
+            .page-header .actions .btn {
+                margin-left:10px;
+            }
+
+            .detail-section {
+                background-color: #ffffff;
+                border-radius: 10px;
+                padding: 25px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+                margin-bottom: 30px;
+            }
+
+            .detail-section h2 {
+                font-family: 'Poppins', sans-serif;
+                font-weight: 600;
+                font-size: 1.4em;
+                color: #363795;
+                margin-top: 0;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .detail-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px dashed #e8eff5;
+                font-size: 1em;
+            }
+            .detail-item:last-child {
+                border-bottom: none;
+            }
+
+            .detail-item .label {
+                font-weight: 600;
+                color: #555;
+                margin-right: 15px;
+            }
+
+            .detail-item .value {
+                color: #333;
+                text-align: right;
+            }
+
+            .detail-item .value.highlight {
+                font-weight: 600;
+                color: #005C97;
+            }
+
+            .no-details-message {
+                text-align: center;
+                font-size: 1.2em;
+                color: #777;
+                margin-top: 40px;
+            }
+
+            .back-button-container {
+                margin-top: 30px;
+                text-align: center;
+            }
+
+            .related-drivers-list {
+                list-style-type: none;
+                padding-left: 0;
+            }
+            .related-drivers-list li {
+                padding: 8px 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .related-drivers-list li:last-child {
+                border-bottom: none;
+            }
+            .related-drivers-list li a {
+                text-decoration: none;
+                color: #2980b9;
+                font-weight: 500;
+            }
+            .related-drivers-list li a:hover {
+                text-decoration: underline;
+            }
+
+            @media (max-width: 768px) {
+                .page-header { flex-direction: column; align-items: flex-start; }
+                .page-header h1 { font-size: 2em; margin-bottom: 15px; }
+                .page-header .actions { width:100%; display:flex; justify-content: space-around; }
+                .page-header .actions .btn { margin-left:0; flex-grow:1; }
+                .page-header .actions .btn:not(:last-child) { margin-right:10px; }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div th:fragment="contentFragment">
+    <div class="page-content-container">
+        <div th:if="${team != null}">
+            <div class="page-header">
+                <h1 th:text="${team.name}">Csapat Neve</h1>
+                <div class="actions">
+                    <a th:href="@{/teams/edit/{id}(id=${team.id})}" class="btn btn-primary">Szerkesztés</a>
+                    <a th:href="@{/teams}" class="btn btn-outline-secondary">Vissza a listához</a>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h2>Csapat Adatok</h2>
+                <div class="detail-item">
+                    <span class="label">Azonosító:</span>
+                    <span class="value" th:text="${team.id}">N/A</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Csapat Neve:</span>
+                    <span class="value highlight" th:text="${team.name}">N/A</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Székhely:</span>
+                    <span class="value" th:text="${team.base}">N/A</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Csapatfőnök:</span>
+                    <span class="value" th:text="${team.teamPrincipal ?: 'N/A'}">N/A</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Autó:</span>
+                    <span class="value" th:text="${team.carName ?: 'N/A'}">N/A</span>
+                </div>
+            </div>
+
+            <div class="detail-section" th:if="${driversInTeam != null and not driversInTeam.empty}">
+                <h2>A csapat versenyzői</h2>
+                <ul class="related-drivers-list">
+                    <li th:each="driver : ${driversInTeam}">
+                        <a th:href="@{/drivers/{id}(id=${driver.id})}" th:text="${driver.firstName + ' ' + driver.lastName}">Versenyző Neve</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="detail-section" th:if="${driversInTeam != null and driversInTeam.empty}">
+                <h2>A csapat versenyzői</h2>
+                <p>Nincsenek ehhez a csapathoz rögzített versenyzők.</p>
+            </div>
+        </div>
+
+        <div th:if="${team == null}" class="no-details-message">
+            <p>A keresett csapat részletei nem találhatóak.</p>
+            <div class="back-button-container">
+                <a th:href="@{/teams}" class="btn btn-primary">Vissza a csapatok listájához</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:fragment="scriptsFragment">
+</th:block>
+</body>
+</html>

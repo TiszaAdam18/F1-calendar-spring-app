@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layout :: layout(pageTitleContent=~{::titleFragment},
+                                     pageSpecificStylesContent=~{::stylesFragment},
+                                     mainPageContent=~{::contentFragment},
+                                     pageSpecificScriptsContent=~{::scriptsFragment})}">
+<head>
+    <title th:fragment="titleFragment" th:text="${race != null ? race.name + ' - Verseny Részletei' : 'Verseny Részletei'}">Verseny Részletei</title>
+
+    <th:block th:fragment="stylesFragment">
+        <style>
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #dde2e7;
+            }
+
+            .page-header h1 {
+                font-family: 'Racing Sans One', cursive;
+                color: #2c3e50;
+                font-size: 2.5em;
+                margin: 0;
+            }
+            .page-header .actions .btn {
+                margin-left:10px;
+            }
+
+            .details-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 30px;
+                margin-top: 20px;
+            }
+
+            .detail-card {
+                background-color: #ffffff;
+                border-radius: 10px;
+                padding: 25px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+            }
+
+            .detail-card h2 {
+                font-family: 'Poppins', sans-serif;
+                font-weight: 600;
+                font-size: 1.4em;
+                color: #363795;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .detail-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px dashed #e8eff5;
+                font-size: 1em;
+            }
+            .detail-item:last-child {
+                border-bottom: none;
+            }
+
+            .detail-item .label {
+                font-weight: 600;
+                color: #555;
+                margin-right: 15px;
+            }
+
+            .detail-item .value {
+                color: #333;
+                text-align: right;
+            }
+
+            .detail-item .value.highlight {
+                font-weight: 600;
+                color: #005C97;
+            }
+
+            .no-details-message {
+                text-align: center;
+                font-size: 1.2em;
+                color: #777;
+                margin-top: 40px;
+            }
+
+            .back-button-container {
+                margin-top: 30px;
+                text-align: center;
+            }
+
+            @media (max-width: 768px) {
+                .page-header { flex-direction: column; align-items: flex-start; }
+                .page-header h1 { font-size: 2em; margin-bottom: 15px; }
+                .page-header .actions { width:100%; display:flex; justify-content: space-around; }
+                .page-header .actions .btn { margin-left:0; flex-grow:1; }
+                .page-header .actions .btn:not(:last-child) { margin-right:10px; }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div th:fragment="contentFragment">
+    <div class="page-content-container">
+        <div th:if="${race != null}">
+            <div class="page-header">
+                <h1 th:text="${race.name}">Verseny Címe</h1>
+                <div class="actions">
+                    <a th:href="@{/races/edit/{id}(id=${race.id})}" class="btn btn-primary">Szerkesztés</a>
+                    <a th:href="@{/races}" class="btn btn-outline-secondary">Vissza a listához</a>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-card">
+                    <h2>Általános Információk</h2>
+                    <div class="detail-item">
+                        <span class="label">Azonosító:</span>
+                        <span class="value" th:text="${race.id}">N/A</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Verseny Neve:</span>
+                        <span class="value highlight" th:text="${race.name}">N/A</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Körök száma:</span>
+                        <span class="value" th:text="${race.laps != null ? race.laps : 'N/A'}">N/A</span>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <h2>Időpont és Helyszín</h2>
+                    <div class="detail-item">
+                        <span class="label">Dátum:</span>
+                        <span class="value" th:text="${race.date != null ? #temporals.format(race.date, 'yyyy. MMMM dd.') : 'N/A'}">N/A</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Kezdési időpont:</span>
+                        <span class="value" th:text="${race.startTime != null ? #temporals.format(race.startTime, 'HH:mm') : 'N/A'}">N/A</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Versenypálya:</span>
+                        <span class="value highlight" th:text="${race.circuitName != null ? race.circuitName : 'N/A'}">N/A</span>
+                    </div>
+                    <div class="detail-item" th:if="${race.circuitId != null}">
+                        <span class="label">Pálya részletei:</span>
+                        <span class="value">
+                                <a th:href="@{/circuits/{id}(id=${race.circuitId})}" class="btn btn-sm btn-info" style="background-color: #5dade2; border-color:#5dade2; color:white;">Pálya adatlapja</a>
+                            </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${race == null}" class="no-details-message">
+            <p>A keresett verseny részletei nem találhatóak.</p>
+            <div class="back-button-container">
+                <a th:href="@{/races}" class="btn btn-primary">Vissza a versenyek listájához</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:fragment="scriptsFragment">
+</th:block>
+</body>
+</html>

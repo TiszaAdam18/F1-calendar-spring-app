@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layout :: layout(pageTitleContent=~{::titleFragment},
+                                     pageSpecificStylesContent=~{::stylesFragment},
+                                     mainPageContent=~{::contentFragment},
+                                     pageSpecificScriptsContent=~{::scriptsFragment})}">
+<head>
+    <title th:fragment="titleFragment" th:text="${pageTitle ?: 'Versenypálya Adatok'}">Versenypálya Adatok</title>
+
+    <th:block th:fragment="stylesFragment">
+        <style>
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #dde2e7;
+            }
+
+            .page-header h1 {
+                font-family: 'Racing Sans One', cursive;
+                color: #2c3e50;
+                font-size: 2.5em;
+                margin: 0;
+            }
+
+            .form-group {
+                margin-bottom: 25px;
+            }
+
+            .form-group label {
+                display: block;
+                font-weight: 600;
+                color: #34495e;
+                margin-bottom: 8px;
+                font-size: 0.95em;
+            }
+
+            .form-control {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                font-size: 1em;
+                color: #495057;
+                background-color: #fff;
+                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+
+            .form-control:focus {
+                border-color: #363795;
+                outline: 0;
+                box-shadow: 0 0 0 0.2rem rgba(54, 55, 149, 0.25);
+            }
+
+            .error-message {
+                color: #e74c3c;
+                font-size: 0.85em;
+                margin-top: 5px;
+                display: block;
+            }
+
+            .has-error .form-control {
+                border-color: #e74c3c;
+            }
+            .has-error .form-control:focus {
+                box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+            }
+
+            .form-actions {
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #e9ecef;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+
+            .form-actions .btn {
+                min-width: 120px;
+            }
+
+            @media (max-width: 768px) {
+                .page-header h1 { font-size: 2em; }
+                .form-actions { flex-direction: column; }
+                .form-actions .btn { width: 100%; margin-bottom: 10px; }
+                .form-actions .btn:last-child { margin-bottom: 0; }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div th:fragment="contentFragment">
+    <div class="page-content-container">
+        <div class="page-header">
+            <h1 th:text="${circuitDTO.id == null ? 'Új Versenypálya Létrehozása' : 'Pálya Szerkesztése: ' + circuitDTO.name}">Pálya Adatok</h1>
+        </div>
+
+        <form th:object="${circuitDTO}" th:action="${formAction}" method="post">
+            <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error' : ''">
+                <label for="name">Pálya Neve:</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Pl. Hungaroring"/>
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></span>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('country')} ? 'has-error' : ''">
+                <label for="country">Ország:</label>
+                <input type="text" id="country" th:field="*{country}" class="form-control" placeholder="Pl. Magyarország"/>
+                <span th:if="${#fields.hasErrors('country')}" th:errors="*{country}" class="error-message"></span>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('city')} ? 'has-error' : ''">
+                <label for="city">Város:</label>
+                <input type="text" id="city" th:field="*{city}" class="form-control" placeholder="Pl. Mogyoród"/>
+                <span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="error-message"></span>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('trackLengthKm')} ? 'has-error' : ''">
+                <label for="trackLengthKm">Pálya Hossza (km):</label>
+                <input type="number" step="0.001" id="trackLengthKm" th:field="*{trackLengthKm}" class="form-control" placeholder="Pl. 4.381"/>
+                <span th:if="${#fields.hasErrors('trackLengthKm')}" th:errors="*{trackLengthKm}" class="error-message"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success" th:text="${circuitDTO.id == null ? 'Létrehozás' : 'Mentés'}">Mentés</button>
+                <a th:href="@{/circuits}" class="btn btn-outline-secondary">Mégse</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block th:fragment="scriptsFragment">
+</th:block>
+</body>
+</html>

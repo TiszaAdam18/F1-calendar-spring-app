@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layout :: layout(pageTitleContent=~{::titleFragment},
+                                     pageSpecificStylesContent=~{::stylesFragment},
+                                     mainPageContent=~{::contentFragment},
+                                     pageSpecificScriptsContent=~{::scriptsFragment})}">
+<head>
+    <title th:fragment="titleFragment">Versenyek - F1 Versenynaptár</title>
+
+    <th:block th:fragment="stylesFragment">
+        <style>
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #dde2e7;
+            }
+
+            .page-header h1 {
+                font-family: 'Racing Sans One', cursive;
+                color: #2c3e50;
+                font-size: 2.5em;
+                margin: 0;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            }
+
+            .list-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0;
+                margin-top: 20px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            .list-table th, .list-table td {
+                padding: 14px 18px;
+                text-align: left;
+                border-bottom: 1px solid #e8eff5;
+                vertical-align: middle;
+            }
+
+            .list-table th:first-child, .list-table td:first-child {
+                padding-left: 25px;
+            }
+            .list-table th:last-child, .list-table td:last-child {
+                padding-right: 25px;
+            }
+
+            .list-table thead {
+                background: #4a5568;
+                color: #ffffff;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.85em;
+                letter-spacing: 0.5px;
+            }
+
+            .list-table tbody tr {
+                background-color: #fff;
+                transition: background-color 0.2s ease;
+            }
+
+            .list-table tbody tr:nth-child(even) {
+                background-color: #f7f9fc;
+            }
+
+            .list-table tbody tr:hover {
+                background-color: #eef2f7;
+            }
+
+            .list-table td a.item-name-link {
+                color: #2980b9;
+                text-decoration: none;
+                font-weight: 600;
+            }
+            .list-table td a.item-name-link:hover {
+                text-decoration: underline;
+                color: #1f638f;
+            }
+
+            .action-buttons a {
+                margin-right: 8px;
+            }
+            .action-buttons a:last-child {
+                margin-right: 0;
+            }
+
+            @media (max-width: 768px) {
+                .page-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .page-header h1 {
+                    font-size: 2em;
+                    margin-bottom: 15px;
+                }
+
+                .list-table {
+                    box-shadow: none;
+                    border-radius: 0;
+                }
+                .list-table, .list-table thead, .list-table tbody, .list-table th, .list-table td, .list-table tr {
+                    display: block;
+                }
+                .list-table thead {
+                    display: none;
+                }
+                .list-table tr {
+                    margin-bottom: 15px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                    background-color: #fff !important;
+                }
+                .list-table td {
+                    border: none;
+                    border-bottom: 1px solid #f0f0f0;
+                    position: relative;
+                    padding-left: 45% !important;
+                    text-align: right;
+                    display:flex;
+                    justify-content: space-between;
+                    align-items:center;
+                }
+                .list-table td:last-child {
+                    border-bottom: none;
+                }
+                .list-table td:before {
+                    content: attr(data-label);
+                    position: absolute;
+                    left: 15px;
+                    width: calc(45% - 25px);
+                    padding-right: 10px;
+                    white-space: nowrap;
+                    font-weight: 600;
+                    text-align: left;
+                    color: #555;
+                }
+                .action-buttons {
+                    text-align: right !important;
+                    padding-left: 15px !important;
+                    width:100%;
+                }
+                .action-buttons a {
+                    margin: 5px 3px;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div th:fragment="contentFragment">
+    <div class="page-content-container">
+        <div class="page-header">
+            <h1 th:text="${pageTitle ?: 'Versenyek'}">Versenyek</h1>
+            <a th:href="@{/races/new}" class="btn btn-success">Új Verseny</a>
+        </div>
+
+        <div th:if="${races == null or races.empty}" class="alert alert-info">
+            Nincsenek megjeleníthető versenyek. Adj hozzá egyet!
+        </div>
+
+        <table th:if="${races != null and not races.empty}" class="list-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Verseny Neve</th>
+                <th>Pálya</th>
+                <th>Dátum</th>
+                <th>Kezdés</th>
+                <th>Körök</th>
+                <th>Műveletek</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="race : ${races}">
+                <td data-label="ID:" th:text="${race.id}">1</td>
+                <td data-label="Név:">
+                    <a th:href="@{/races/{id}(id=${race.id})}" class="item-name-link" th:text="${race.name}">Magyar Nagydíj</a>
+                </td>
+                <td data-label="Pálya:" th:text="${race.circuitName}">Hungaroring</td>
+                <td data-label="Dátum:" th:text="${#temporals.format(race.date, 'yyyy-MM-dd')}">2024-07-21</td>
+                <td data-label="Kezdés:" th:text="${#temporals.format(race.startTime, 'HH:mm')}">15:00</td>
+                <td data-label="Körök:" th:text="${race.laps}">70</td>
+                <td data-label="Műveletek:" class="action-buttons">
+                    <a th:href="@{/races/edit/{id}(id=${race.id})}" class="btn btn-sm btn-primary">Szerk.</a>
+                    <a th:href="@{/races/delete/{id}(id=${race.id})}"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Biztosan törölni szeretnéd ezt a versenyt?');">Törlés</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<th:block th:fragment="scriptsFragment">
+</th:block>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layout :: layout(pageTitleContent=~{::titleFragment},
+                                     pageSpecificStylesContent=~{::stylesFragment},
+                                     mainPageContent=~{::contentFragment},
+                                     pageSpecificScriptsContent=~{::scriptsFragment})}">
+<head>
+    <title th:fragment="titleFragment">Kezdőlap - F1 Versenynaptár</title>
+
+    <th:block th:fragment="stylesFragment">
+        <style>
+            .hero-section {
+                background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://placehold.co/1200x500/2c3e50/ffffff?text=Forma+1+Akcióban');
+                background-size: cover;
+                background-position: center center;
+                padding: 80px 20px;
+                text-align: center;
+                color: white;
+                border-radius: 10px;
+                margin-bottom: 40px;
+            }
+
+            .hero-section h1 {
+                font-family: 'Racing Sans One', cursive;
+                font-size: 3.5em;
+                margin-bottom: 20px;
+                text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+            }
+
+            .hero-section .lead {
+                font-size: 1.3em;
+                margin-bottom: 30px;
+                max-width: 700px;
+                margin-left: auto;
+                margin-right: auto;
+                font-weight: 300;
+            }
+
+            .hero-buttons .btn {
+                margin: 0 10px;
+                padding: 15px 30px;
+                font-size: 1.1em;
+            }
+
+            .features-section {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 30px;
+                justify-content: center;
+            }
+
+            .feature-card {
+                background-color: #ffffff;
+                border-radius: 10px;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+                padding: 25px;
+                text-align: center;
+                width: calc(33.333% - 20px);
+                min-width: 280px;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+            }
+
+            .feature-card .icon {
+                font-size: 3em;
+                margin-bottom: 15px;
+                color: #363795;
+            }
+
+            .feature-card h2 {
+                font-family: 'Poppins', sans-serif;
+                font-weight: 600;
+                font-size: 1.5em;
+                margin-bottom: 10px;
+                color: #2c3e50;
+            }
+
+            .feature-card p {
+                font-size: 0.95em;
+                color: #555;
+                line-height: 1.5;
+            }
+
+            @media (max-width: 992px) {
+                .feature-card { width: calc(50% - 15px); }
+            }
+            @media (max-width: 768px) {
+                .hero-section h1 { font-size: 2.5em; }
+                .hero-section .lead { font-size: 1.1em; }
+                .hero-buttons .btn { margin-bottom:10px; display:block; width:80%; margin-left:auto; margin-right:auto; }
+                .feature-card { width: 100%; }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div th:fragment="contentFragment">
+    <div class="hero-section">
+        <h1 class="display-4">Üdvözöllek az F1 Versenynaptárban!</h1>
+        <p class="lead">
+            Böngészd a Forma 1-es szezon versenyeit, ismerd meg a pályákat, csapatokat és versenyzőket.
+            Kezeld az adatokat egyszerűen és gyorsan.
+        </p>
+        <div class="hero-buttons">
+            <a th:href="@{/races}" class="btn btn-primary btn-lg">Versenyek Megtekintése</a>
+            <a th:href="@{/circuits/new}" class="btn btn-outline-secondary btn-lg">Új Pálya</a>
+        </div>
+    </div>
+
+    <div class="page-content-container">
+        <div class="features-section">
+            <div class="feature-card">
+                <div class="icon">🏆</div>
+                <h2>Legfrissebb Eredmények</h2>
+                <p>Kövesd nyomon a legutóbbi versenyek győzteseit és a bajnokság állását. (Hamarosan!)</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🏎️</div>
+                <h2>Csapatok és Pilóták</h2>
+                <p>Ismerd meg kedvenc csapataidat és pilótáidat, statisztikákkal és érdekességekkel. (Hamarosan!)</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🗺️</div>
+                <h2>Pálya Információk</h2>
+                <p>Részletes információk minden versenypályáról, vonalvezetések és rekordok. (Hamarosan!)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:fragment="scriptsFragment">
+</th:block>
+</body>
+</html>
